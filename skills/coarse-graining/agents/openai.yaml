@@ -1,0 +1,4 @@
+interface:
+  display_name: "Coarse-Graining"
+  short_description: "Parts, units and measured outlines of a Lean proof"
+  default_prompt: "Use $coarse-graining to divide the closure of this Lean development into parts and units, select its key statements, and write unit outlines linked to the exact Lean lines within measured word allowances."

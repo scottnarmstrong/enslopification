@@ -1,0 +1,31 @@
+# Words of the writing process, of the agents and of the formal development. Allowed only inside
+# the source-disclosure region (the exception markers); everywhere else they must go.
+# Case-sensitive unless a line starts with (?i).
+# "spine" and "proposal" are also terms of art in some fields (the spine of a 3-manifold, a spine
+# decomposition of a branching process, a proposal distribution in Markov chain Monte Carlo): a
+# project in such a field allows its phrase in the project's allow file (--allow FILE), on the
+# author's decision, as narrowly as the use, e.g. \bspine decompositions?\b. Common mathematical
+# words such as "round" are deliberately not listed.
+\bLean\b
+(?i)\bformali[sz](?:e|es|ed|ing|ation|ations)\b
+(?i)\bproof assistants?\b
+(?i)\bkernel[- ]checked\b
+\b(?:Claude|Codex|ChatGPT|GPT(?:-\d[\w.]*)?|Opus|Sonnet|Haiku|Fable|Gemini|LLMs?)\b
+(?i)\bAI (?:agents?|models?|systems?)\b
+(?i)\b(?:packets?|pipelines?|tickets?|work items?|prompts?|verdicts?)\b
+(?i)\borchestrat[a-z]*\b
+(?i)\breviewers?\b
+\bdrafts?\b
+(?i)\bfrozen (?:spine|statements?|contracts?)\b
+(?i)\bclause maps?\b
+(?i)\bdeclarations?\b
+(?i)\bused ?= ?1\b
+(?i)\bstages? \d
+(?i)\bcommit [0-9a-f]{7,40}\b
+(?i)\bspines?\b
+(?i)\bproposals?\b
+(?i)\bowner reviews?\b
+(?i)\bfresh[- ]readers?\b
+(?i)\bprose[- ]truth\b
+(?i)\bdelivery reviews?\b
+(?i)\bresponse tables?\b

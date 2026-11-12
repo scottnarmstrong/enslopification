@@ -1,0 +1,4 @@
+interface:
+  display_name: "Writing Workflow"
+  short_description: "Writers propose, one editor integrates, reviewers check frozen snapshots"
+  default_prompt: "Use $writing-workflow to run this section through the cycle (proposal, reviews, revision, re-check, delivery) with the roll-out driver."

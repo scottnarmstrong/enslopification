@@ -1,0 +1,50 @@
+{
+  "_doc": [
+    "A cross-section repair round of the cross-section-consistency skill: one writer per section applies the merged",
+    "mismatch table on both sides (cited statements restated to what their proofs give, citing sentences changed,",
+    "new proofs from the Lean, or requests) and writes a response table. Units are sections; 'files' is the glob of",
+    "the section's integrated files, relative to the manuscript. Include the opening part as a unit when the table",
+    "has items there. Each round needs a new stage name (w5, w6, ...): a stage with a .done marker never runs again.",
+    "Deliver accepted requests first (route_requests.py WORKDIR --config <this config> --deliver): a unit's INBOX.md",
+    "is appended to its prompt.",
+    "The editor integrates the proposals, recompiles, reruns cross_refs.py, then runs the targeted re-check.",
+    "Statements: the approved natural spine (spine) is the authority; the frozen contracts (contracts) are the record",
+    "it must cover. Both are protected: a repair that needs a frozen statement changed is reported as DRIFT."
+  ],
+  "workdir": ".",
+  "agents": ["../agents.json", "../../writing-workflow/assets/agents.example.json"],
+  "limits": {"writer": 4},
+  "protect": ["{{manuscript}}", "{{spine}}", "{{contracts}}", "{{lean}}"],
+  "protect_exclude": ["*.aux", "*.log", "*.pdf", "*.out", "*.toc", "*.fls", "*.fdb_latexmk", "*.bbl", "*.blg",
+                      "*.synctex.gz", "*.bcf", "*.run.xml"],
+  "vars": {
+    "templates": "{{driver_dir}}/../../cross-section-consistency/assets/prompts",
+    "standards": "{{driver_dir}}/../../exposition-standards/scripts",
+    "common": "{{driver_dir}}/../assets/prompts/writer-common.md",
+    "work": "{{config_dir}}/..",
+    "spine": "{{work}}/spine/SPINE-NATURAL.md",
+    "contracts": "{{work}}/spine/SPINE.md",
+    "style": "{{work}}/STYLE.md",
+    "detail": "{{work}}/DETAIL-STANDARD.md",
+    "notation": "{{work}}/NOTATION.md",
+    "manuscript": "SET-ME: the canonical manuscript directory",
+    "report": "SET-ME: the merged mismatch table of the routed-inputs check",
+    "lean": "SET-ME: the Lean source at the pinned commit",
+    "lean_commit": "SET-ME: the pinned commit",
+    "graph_db": "SET-ME: the dependency database built by lean-dependency-graph",
+    "graph_hint": "query the dependency database with sqlite3 -readonly {{graph_db}} (table nodes: name, kind, module, path, line, used); only rows with used = 1 count"
+  },
+  "units": {
+    "I": {"title": "the opening part", "vars": {"number": "1 to 9", "files": "part1/*.tex"}},
+    "D": {"title": "Activities and the inductive step", "vars": {"number": "13", "files": "part2/D-*.tex"}},
+    "E": {"title": "Trajectories, marked fields and ultraviolet convergence",
+          "vars": {"number": "14", "files": "part2/E-*.tex"}}
+  },
+  "stages": [
+    {"name": "w5", "kind": "write", "profile": "writer-high",
+     "seed": ["{{manuscript}}/{{files}}"],
+     "prompt": "{{templates}}/repair-section.md",
+     "expect": ["response-w5.tsv", "NOTES.md"],
+     "check": ["python3 -I {{standards}}/check_shape.py *.tex", "python3 -I {{standards}}/check_vocabulary.py *.tex"]}
+  ]
+}

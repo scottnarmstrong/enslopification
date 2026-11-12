@@ -1,0 +1,32 @@
+{
+  "_doc": [
+    "Typographic pass (referee-adjudication skill): one reviewer per page range is asked to look at every page image",
+    "of its range. Render the images first with render_pages.sh, one directory per unit, e.g. <images>/img-1-60.",
+    "Each report is saved as <workdir>/<unit>/inspect/typography.md: the sources consulted, a defects table, and a",
+    "last line 'Clean pages: ...'. Then run writing-workflow's check_coverage.py --pages <first>-<last> on each",
+    "report: a page in neither the table nor the clean-pages line was not reported as inspected. The same shape, with",
+    "exposition-reviewer.md, the snapshot's sources in the packet and require '(?m)^\\W*Renamings:', runs the",
+    "exposition reviews of an editorial pass. Copy this file to <working repository>/rollout/, replace every SET-ME",
+    "value, run with --dry-run first."
+  ],
+  "workdir": ".",
+  "agents": ["../agents.json", "../../writing-workflow/assets/agents.example.json"],
+  "limits": {"writer": 4, "reviewer": 6},
+  "vars": {
+    "templates": "{{driver_dir}}/../../referee-adjudication/assets/prompts",
+    "pdf": "SET-ME: the compiled PDF of the frozen release candidate",
+    "images": "SET-ME: the directory holding one image directory per page range (render_pages.sh -o)"
+  },
+  "units": {
+    "p001": {"title": "pages 1-60", "vars": {"first_page": "1", "last_page": "60"}},
+    "p061": {"title": "pages 61-120", "vars": {"first_page": "61", "last_page": "120"}},
+    "p121": {"title": "pages 121-180", "vars": {"first_page": "121", "last_page": "180"}}
+  },
+  "stages": [
+    {"name": "inspect", "kind": "review", "profile": "reviewer",
+     "packet": ["main.pdf={{pdf}}", "images={{images}}/img-{{first_page}}-{{last_page}}"],
+     "min_chars": 1000,
+     "require": "(?m)^\\W*Clean pages",
+     "reviews": {"typography": "{{templates}}/typography-reviewer.md"}}
+  ]
+}

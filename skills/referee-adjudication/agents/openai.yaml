@@ -1,0 +1,4 @@
+interface:
+  display_name: "Referee Adjudication"
+  short_description: "Adjudicate referee and reader reviews against the text and the Lean before applying them"
+  default_prompt: "Use $referee-adjudication to run a referee round on this draft: independent referee reports, adjudication of every suggestion against the text and the Lean, application by section writers, and a confirmation review before integration."

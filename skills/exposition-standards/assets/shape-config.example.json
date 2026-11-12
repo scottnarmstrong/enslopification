@@ -1,0 +1,13 @@
+{
+  "_comment": "check_shape.py configuration with this collection's defaults (the word caps and the four-reference cap are the published caps of the Yang-Mills campaign, 2026). Words: target and cap; refcap: cross-references plus tags. tag_regex lists the statement tags of the Yang-Mills manuscript; replace it with yours or delete it.",
+  "environments": {
+    "theorem":     {"target": 100, "cap": 150, "refcap": 4},
+    "proposition": {"target": 100, "cap": 150, "refcap": 4},
+    "lemma":       {"target": 100, "cap": 150, "refcap": 4},
+    "corollary":   {"target": 100, "cap": 150, "refcap": 4},
+    "definition":  {"target": 120, "cap": 200, "refcap": 6}
+  },
+  "main_environments": ["maintheorem"],
+  "main": {"target": 200, "cap": 250, "refcap": 8},
+  "tag_regex": "\\b(?:RG|MT|UB|UV|IV|FC|MC|ST|SC|PH|RC|TR|NF|OP|CT|Q[0-6]|B[1-6]|E[1-7]|W[0-3])\\b"
+}

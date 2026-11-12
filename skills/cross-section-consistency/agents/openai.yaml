@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cross-Section Consistency"
+  short_description: "Check that sections cite each other only for what the cited statements say"
+  default_prompt: "Use $cross-section-consistency to inventory the citations between sections, check each against the cited statement, repair both sides and re-check until every item is resolved."

@@ -1,0 +1,12 @@
+# Lean names and Lean syntax. Add the development's namespaces on the command line with
+# --lean-namespace (for example YM and YangMills); they are not listed here.
+# Not listed on purpose: ":=" and the letters R, N, Z, C typed as Unicode blackboard symbols,
+# which ordinary mathematical TeX also uses. Add them for a project that never does.
+\bMathlib\.[A-Za-z_]
+\b(?:Finset|Fin|Set|Real|Nat|Int|Complex|MeasureTheory|Filter)\.[A-Za-z_]
+\bsorry\b
+\.o?lean\b
+`[^`'\s]+`
+\bfun\s+[A-Za-z_][\w']*\s*(?:=>|↦)
+\b(?:theorem|lemma|def|structure|instance|abbrev|class|inductive)\s+[A-Za-z_][\w.']*\s*[({\[]\s*[A-Za-z_][\w']*\s*:
+\b[A-Z][a-z0-9]+[A-Z][A-Za-z0-9]*\.[A-Za-z_][\w']*

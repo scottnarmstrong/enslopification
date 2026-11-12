@@ -1,0 +1,40 @@
+{
+  "_doc": [
+    "Referee round, step 2 (referee-adjudication skill): one adjudicator per referee report, each a fresh read-only",
+    "reviewer with the snapshot, the report, the Lean and the dependency database. The adjudication is saved as",
+    "<workdir>/<unit>/adjudicate/adjudication.md; check it with adjudication_summary.py --expect <unit>=N.",
+    "Copy this file to <working repository>/rollout/, replace every SET-ME value, run with --dry-run first."
+  ],
+  "workdir": ".",
+  "agents": ["../agents.json", "../../writing-workflow/assets/agents.example.json"],
+  "limits": {"writer": 4, "reviewer": 6},
+  "vars": {
+    "templates": "{{driver_dir}}/../../referee-adjudication/assets/prompts",
+    "work": "{{config_dir}}/..",
+    "snapshot": "SET-ME: the frozen snapshot the referees read",
+    "referees": "SET-ME: the workdir of the referee run",
+    "lean": "SET-ME: the Lean source at the pinned commit",
+    "lean_commit": "SET-ME: the pinned commit, e.g. 3456e5e",
+    "graph_db": "SET-ME: the dependency database built by lean-dependency-graph",
+    "graph_hint": "query the dependency database with sqlite3 -readonly {{graph_db}} (table nodes: name, kind, module, path, line, used); only rows with used = 1 count",
+    "read_dirs": ["{{lean}}", "{{work}}"],
+    "paper": "a natural-language proof, written by AI agents, of the theorem of a completed Lean development",
+    "constraints": "the literal formal main theorem must not change; the natural main theorem keeps its approved wording; a statement has at most 150 words and 4 references, a definition at most 200 words and 6 references",
+    "max_lines": "250"
+  },
+  "units": {
+    "part1": {"title": "the Part I report",
+              "vars": {"scope": "Part I (Sections 1-9)", "report": "{{referees}}/part1/referee/report.md"}},
+    "uv":    {"title": "the Sections 10-14 report",
+              "vars": {"scope": "Sections 10-14", "report": "{{referees}}/uv/referee/report.md"}},
+    "rest":  {"title": "the Sections 15-19 report",
+              "vars": {"scope": "Sections 15-19", "report": "{{referees}}/rest/referee/report.md"}}
+  },
+  "stages": [
+    {"name": "adjudicate", "kind": "review", "profile": "reviewer",
+     "packet": ["manuscript={{snapshot}}", "referee-report.md={{report}}"],
+     "min_chars": 4000,
+     "require": "(?m)^\\|\\s*#\\s*\\|\\s*Verdict\\s*\\|",
+     "reviews": {"adjudication": "{{templates}}/adjudicator.md"}}
+  ]
+}

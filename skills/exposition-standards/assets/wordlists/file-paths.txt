@@ -1,0 +1,4 @@
+# File paths. Arguments of \input, \include, \includegraphics, \url and \href are blanked before
+# matching, so deliberate links and inputs do not count.
+(?:^|[\s({\[])(?:~|\.{1,2})?/(?:[\w.-]+/)+[\w.-]*
+\b[\w-]+(?:/[\w.-]+)+\.(?:lean|olean|py|sh|md|tsv|json|txt|sqlite|log|yaml|toml)\b

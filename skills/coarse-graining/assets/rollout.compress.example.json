@@ -1,0 +1,34 @@
+{
+  "_doc": [
+    "Condensed outlines (coarse-graining skill): compress (the writer condenses the edited notes into outline.md;",
+    "the check measures words against the unit's allowance, so an overrun gets one retry that quotes it) -> fidelity",
+    "(a reviewer lists every outline statement that the notes do not support or that is stronger than the notes) ->",
+    "status-outline. It extends rollout.outlines.example.json (units and variables) but runs in a workdir of its own,",
+    "because every run writes <its workdir>/<unit>/STATUS: the outline's fidelity status (FAITHFUL or ISSUES) is",
+    "<this run's workdir>/<unit>/STATUS, and the published status of the notes (EDITED or COMPARED) stays in",
+    "<outlines_workdir>/<unit>/STATUS, which this run never writes. The notes are seeded from the outline run's edit",
+    "stage (<outlines_workdir>/<unit>/edit/notes.md); to condense notes made elsewhere, point 'seed' at a file named",
+    "notes.md for each unit.",
+    "Allowance: one page (about 500 words) per 4,000 Lean lines, at least 3 and at most 10 pages, 10% tolerance",
+    "(outline_budget.py). A still-over outline after the retry fails the stage: decide it by hand, do not loop."
+  ],
+  "extends": "rollout.outlines.example.json",
+  "workdir": "SET-ME: working directory for the compression stages, not the outline run's (outside the skills repository)",
+  "vars": {
+    "outlines_workdir": "SET-ME: the workdir of the outline run (rollout.outlines.example.json), whose <unit>/edit/notes.md are condensed"
+  },
+  "stages": [
+    {"name": "compress", "kind": "write", "profile": "writer-high",
+     "seed": ["{{outlines_workdir}}/{{key}}/edit/notes.md"],
+     "prompt": "{{templates}}/outline-compress.md",
+     "expect": ["outline.md"],
+     "check": ["python3 -I {{scripts}}/outline_budget.py outline.md --lines {{lean_lines}} --tolerance 0.10 {{sections}}",
+               "python3 -I {{scripts}}/gh_math.py --check outline.md"]},
+    {"name": "fidelity", "kind": "review", "profile": "reviewer", "min_chars": 40,
+     "packet": ["outline.md={{prev_dir}}/outline.md", "notes.md={{prev_dir}}/notes.md"],
+     "require": "(?im)^[\\s#>*_|`-]*verdict\\W+(faithful|issues)",
+     "reviews": {"fidelity": "{{templates}}/outline-fidelity.md"}},
+    {"name": "status-outline", "kind": "verdict", "report": "fidelity/fidelity.md",
+     "pattern": "(?i)verdict\\W+faithful\\b", "pass": "FAITHFUL", "fail": "ISSUES"}
+  ]
+}

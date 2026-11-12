@@ -1,0 +1,9 @@
+# page_report.py allowances. key: section number, \label, or a substring of the title.
+# kind: cap (over = not done, the check fails) or guide (complete at the detail standard, no
+# padding; over = report the measured length and the reason). Note: free text.
+key	pages	kind	note
+1	4	cap	the result: informal statement, scope, sources and checking, reading guide
+2	6	cap	only the objects needed to state the main theorem
+3	3	cap	the main theorem and the order of choices
+sec:uv-step	30	guide	hardest section: completeness binding, padding policed
+Appendix	5	cap	correspondence with the formal statement

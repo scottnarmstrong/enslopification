@@ -1,0 +1,10 @@
+# commit: {{full commit hash of the formal source}}
+# repository: {{URL of the formal source}}
+# graph: {{how the closure was computed, e.g. compiled graph, roots, date}}
+# relations: DIRECT, WEAKENING, COMPOSITION, CITED or NONE, in exactly the sense of the relations table in honest-publication/references/correspondence-and-statement.md; a standard result from the literature keeps its Lean declarations, with its bibliography key under notes
+label	kind	Lean declarations used=1	relation	file:line	notes
+thm:main	theorem	Some.mainTheorem	DIRECT	Main.lean:12-30	
+def:object	definition	Some.Object; Some.Object.norm	COMPOSITION	Objects.lean:40; Objects.lean:58	
+lem:bound	lemma	Some.bound_of_step; Real.exp_le_exp (Mathlib)	WEAKENING	Steps.lean:211	
+lem:contraction	lemma	Some.contraction_fixed_point	DIRECT	Steps.lean:95	standard result (contraction mapping theorem), bibliography key Key1970
+rem:heuristic	remark	-	NONE	section-3.tex:88	

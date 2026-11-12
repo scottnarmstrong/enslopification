@@ -1,0 +1,61 @@
+{
+  "_doc": [
+    "Agent profiles for agent_cli.py and rollout.py (writing-workflow skill; field table in references/driver.md).",
+    "Writers and reviewers of the same packet must come from different model families ('family').",
+    "Writers run at extra-high effort for drafts and revisions and at high effort ('writer-high') for last fixes;",
+    "reviewers run in a fresh context with read-only tools.",
+    "Before a round, run the permission preflight: agent_cli.py --agents agents.json --profile reviewer --preflight",
+    "--read <a Lean file> --run \"sqlite3 -readonly <graph.sqlite> 'select count(*) from nodes where used = 1'\"",
+    "Least privilege: writers write only in their stage directory; reviewers cannot write at all (see",
+    "references/agent-profiles.md). Command-line flags change between CLI versions: check them with --help."
+  ],
+  "writer": {
+    "_doc": "Codex CLI; the workspace-write sandbox rooted at the stage directory ({{cwd}}) lets it write only there.",
+    "argv": ["codex", "exec", "-m", "{{model}}", "-c", "model_reasoning_effort={{effort}}",
+             "--sandbox", "workspace-write", "--skip-git-repo-check", "-C", "{{cwd}}", "-"],
+    "model": "gpt-6.1-sol",
+    "effort": "xhigh",
+    "family": "openai",
+    "stdin": "prompt",
+    "stdout": "log",
+    "timeout_s": 14400,
+    "retries": 1,
+    "fail_patterns": ["usage limit", "rate limit", "rate_limit", "quota exceeded", "insufficient_quota"]
+  },
+  "writer-high": {
+    "_doc": "The same writer at high effort, for last fixes and fix-ups.",
+    "extends": "writer",
+    "effort": "high"
+  },
+  "writer-unsandboxed": {
+    "_doc": "No sandbox, each writer in a dedicated directory, for writers whose tools the sandbox blocks (a TeX installation that writes caches). Use only together with 'protect' in the rollout config, which fails the job loudly if a protected path changes.",
+    "extends": "writer",
+    "argv": ["codex", "exec", "-m", "{{model}}", "-c", "model_reasoning_effort={{effort}}",
+             "--dangerously-bypass-approvals-and-sandbox", "--skip-git-repo-check", "-C", "{{cwd}}", "-"]
+  },
+  "reviewer": {
+    "_doc": "Claude Code in print mode; read-only tools (diff compares a proposal with the live file it replaces, as confirmation reviews do); prints its report, which the runner saves (it never needs write permission). read_dirs: every directory it must read besides its working directory (override it in the rollout config's vars).",
+    "argv": ["claude", "-p", "--model", "{{model}}", "--effort", "{{effort}}",
+             "--tools", "Read,Grep,Glob,Bash",
+             "--allowedTools", "Read", "Grep", "Glob", "Bash(sqlite3 -readonly:*)", "Bash(grep:*)", "Bash(wc:*)",
+             "Bash(ls:*)", "Bash(sha256sum:*)", "Bash(diff:*)", "Bash(pdfinfo:*)", "Bash(pdftotext:*)",
+             "--disallowedTools", "Edit", "Write", "NotebookEdit",
+             "--add-dir", "{{read_dirs}}",
+             "--output-format", "text"],
+    "model": "opus",
+    "effort": "high",
+    "family": "anthropic",
+    "stdin": "prompt",
+    "stdout": "report",
+    "timeout_s": 10800,
+    "min_chars": 2000,
+    "retries": 1,
+    "vars": {"read_dirs": ["{{cwd}}"]},
+    "fail_patterns": ["usage limit", "rate limit", "rate_limit", "quota exceeded", "you've hit your"]
+  },
+  "referee": {
+    "_doc": "A referee reading a whole frozen draft (referee-adjudication skill). Any strong model of a family other than the writers' will do.",
+    "extends": "reviewer",
+    "model": "fable"
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lean to Manuscript"
+  short_description: "Turn a completed Lean development into a checked natural-language manuscript"
+  default_prompt: "Use $lean-to-manuscript to plan and run the campaign that turns this Lean development into a natural-language manuscript: brief, graph, outline, spine, writing with independent reviews, reconciliation, referees and honest publication."

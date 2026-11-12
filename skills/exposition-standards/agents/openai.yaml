@@ -1,0 +1,4 @@
+interface:
+  display_name: "Exposition Standards"
+  short_description: "Measured style rules and checks for a manuscript written from Lean"
+  default_prompt: "Use $exposition-standards to set the style file and detail standard of this manuscript and to run the shape, vocabulary, compile and page checks on every section."

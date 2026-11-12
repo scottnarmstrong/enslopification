@@ -1,0 +1,69 @@
+{
+  "_doc": [
+    "Key-statement readers (coarse-graining skill): two independent readers label every candidate of a batch (main,",
+    "key, technical, bookkeeping) and write one sentence each; their printed tables go to kappa.py. Units are the",
+    "batches written by inventory.py --candidates: paste its batches.json over the example units below, and set",
+    "'batches' to its output directory. One review stage, two reviews: reader-a and reader-b, each with its own",
+    "profile, on the same frozen packet (the batch file). Driver: rollout.py of the writing-workflow skill (field table",
+    "in its references/driver.md).",
+    "Families: rollout.py compares a reviewer's family only with the writer of a preceding write stage. This config",
+    "has none, so the driver does not check the readers' families: choose them here. Two families (here the profiles",
+    "reader-claude and reader-gpt) reduce shared blind spots; two runs of one model measure the consistency of one",
+    "procedure (the Yang-Mills readers were two runs of one model). Say which you did when you publish kappa. If you",
+    "add a write stage before 'read' and a reader shares the writer's family, the stage needs \"allow_same_family\": true.",
+    "The codex profile assumes that 'codex exec' prints only the agent's final message on standard output; check it",
+    "with your version (agent_cli.py --preflight), and remove banner lines with strip_lines if needed.",
+    "After the run: kappa.py --a WORKDIR/*/read/reader-a.md --b WORKDIR/*/read/reader-b.md",
+    "  --labels main,key,technical,bookkeeping --collapse main,key --items BATCHES/candidates.tsv",
+    "Use: replace every SET-ME value, run rollout.py rollout.key-statements.example.json --dry-run, then without",
+    "--dry-run; try one batch first (--only B001). The two units below are placeholders in the format of batches.json."
+  ],
+  "workdir": "SET-ME: working directory for the readers (outside the skills repository)",
+  "agents": {
+    "reader-claude": {
+      "_doc": "Claude Code in print mode with read-only tools (as the reviewer profile of writing-workflow's agents.example.json).",
+      "argv": ["claude", "-p", "--model", "{{model}}", "--effort", "{{effort}}",
+               "--tools", "Read,Grep,Glob,Bash",
+               "--allowedTools", "Read", "Grep", "Glob", "Bash(grep:*)",
+               "--disallowedTools", "Edit", "Write", "NotebookEdit",
+               "--add-dir", "{{read_dirs}}",
+               "--output-format", "text"],
+      "model": "sonnet", "effort": "high", "family": "anthropic",
+      "stdin": "prompt", "stdout": "report", "timeout_s": 3600, "retries": 1,
+      "vars": {"read_dirs": ["{{cwd}}"]},
+      "fail_patterns": ["usage limit", "rate limit", "rate_limit", "quota exceeded", "you've hit your"]
+    },
+    "reader-gpt": {
+      "_doc": "Codex CLI in its read-only sandbox; it reads anywhere and writes nowhere.",
+      "argv": ["codex", "exec", "-m", "{{model}}", "-c", "model_reasoning_effort={{effort}}",
+               "--sandbox", "read-only", "--skip-git-repo-check", "-C", "{{cwd}}", "-"],
+      "model": "gpt-6.1-sol", "effort": "medium", "family": "openai",
+      "stdin": "prompt", "stdout": "report", "timeout_s": 3600, "retries": 1,
+      "fail_patterns": ["usage limit", "rate limit", "rate_limit", "quota exceeded", "insufficient_quota"]
+    }
+  },
+  "limits": {"writer": 4, "reviewer": 6},
+  "vars": {
+    "templates": "{{driver_dir}}/../../coarse-graining/assets/prompts",
+    "project": "SET-ME: one line naming the formal result, e.g. OpenAI's Lean proof of the construction of four-dimensional quantum Yang-Mills theory",
+    "lean_root": "SET-ME: the Lean source checked out at the pinned commit (read-only)",
+    "map": "SET-ME: the map directory: statement.md (the statement page of phase 0), units.tsv",
+    "batches": "SET-ME: the output directory of inventory.py --candidates (B001.md, ..., candidates.tsv)",
+    "statement": "{{map}}/statement.md",
+    "units_list": "{{map}}/units.tsv",
+    "read_dirs": ["{{lean_root}}", "{{map}}"]
+  },
+  "units": {
+    "B001": {"title": "unit U1 (title of the unit), candidates 1-20 of 40"},
+    "B002": {"title": "unit U1 (title of the unit), candidates 21-40 of 40"}
+  },
+  "stages": [
+    {"name": "read", "kind": "review", "profile": "reader-claude", "min_chars": 100,
+     "packet": ["batch.md={{batches}}/{{key}}.md"],
+     "require": "(?m)^item\\tlabel\\tsummary[ \\t]*$",
+     "reviews": {
+       "reader-a": {"prompt": "{{templates}}/key-statement-reader.md"},
+       "reader-b": {"prompt": "{{templates}}/key-statement-reader.md", "profile": "reader-gpt"}
+     }}
+  ]
+}

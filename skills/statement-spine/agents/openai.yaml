@@ -1,0 +1,4 @@
+interface:
+  display_name: "Statement Spine"
+  short_description: "Fix a manuscript's statements in natural form, with a clause map against the Lean"
+  default_prompt: "Use $statement-spine to draft, reconcile, restate in natural form, clause-map and freeze the statements of the opening part against the Lean development before any prose is written."

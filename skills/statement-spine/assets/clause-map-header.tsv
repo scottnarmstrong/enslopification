@@ -1,0 +1,3 @@
+clause	destination	scope retained	note
+T1.h2	thm:main; lem:energy (hypothesis on the data)	for every s > d/2 + 1 and every initial datum in H^s; constants depend only on s and d
+T1.c3	prop:uniqueness	uniqueness in the class C([0,T]; H^s) only, not in L^2; existence of one solution for each datum, not a solution operator continuous in the datum	scope-sensitive: fixed by `Pkg.Main.unique` (used = 1), source-evidence key U-src

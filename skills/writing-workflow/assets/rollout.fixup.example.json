@@ -1,0 +1,35 @@
+{
+  "_doc": [
+    "The fix-up of the writing-workflow skill, for units whose delivery review said NOT YET: w4 (apply the required",
+    "fixes and the deferred minors; the same checks as w1-w3) -> d2 (the driver checks the clause map, recompiles",
+    "the section, measures its pages and lists review coverage, then the confirmation and delivery review) ->",
+    "verdict2. It extends the section-cycle config (same workdir, units and variables) and runs only for units",
+    "whose STATUS is NOT YET. A second fix-up needs new stage names (w5, d3, verdict3): a stage that has a .done",
+    "marker is never run again."
+  ],
+  "extends": "rollout.section-cycle.example.json",
+  "stages": [
+    {"name": "w4", "kind": "write", "profile": "writer-high", "when_status": ["NOT YET"],
+     "from": "w3", "reports": "d",
+     "prompt": "{{templates}}/w4-fixup.md",
+     "expect": ["{{file}}", "standalone.pdf", "NOTES.md", "response-w4.tsv"],
+     "check": ["bash {{standards}}/check_section.sh -O -m {{manuscript}}/main.tex -k . {{file}}",
+               "python3 -I {{driver_dir}}/check_allowance.py --pdf standalone.pdf --pages {{pages}} {{allowance_flags}}",
+               "python3 -I {{standards}}/check_shape.py {{file}}",
+               "python3 -I {{standards}}/check_vocabulary.py {{file}}",
+               "{{unit_checks}}"]},
+    {"name": "d2", "kind": "review", "profile": "reviewer", "when_status": ["NOT YET"], "reports": "d",
+     "build": ["python3 -I {{spine_scripts}}/clause_map_check.py --rows-only --map {{clause_map}}",
+               "cd {{prev_dir}} && bash {{standards}}/check_section.sh -O -m {{manuscript}}/main.tex -k . {{file}}",
+               "python3 -I {{driver_dir}}/check_allowance.py --pdf {{prev_dir}}/standalone.pdf --pages {{pages}} {{allowance_flags}}",
+               "python3 -I {{driver_dir}}/check_coverage.py --report-only --tex {{prev_dir}}/{{file}} {{unit_dir}}/r1 {{unit_dir}}/r2 {{unit_dir}}/d"],
+     "packet": ["proposal={{prev_dir}}", "manuscript={{manuscript}}", "SPINE-NATURAL.md={{spine}}",
+                "SPINE.md={{contracts}}", "CLAUSE-MAP.tsv={{clause_map}}", "STYLE.md={{style}}", "DETAIL.md={{detail}}",
+                "REGISTER.md={{register}}", "reviews-1={{unit_dir}}/r1", "reviews-2={{unit_dir}}/r2"],
+     "require": "(?im)^[\\s#>*_|`-]*verdict\\W+(deliver|not yet)",
+     "reviews": {"delivery": ["{{templates}}/review-preamble.md", "{{templates}}/delivery.md",
+                              "{{templates}}/delivery-after-fixup.md"]}},
+    {"name": "verdict2", "kind": "verdict", "when_status": ["NOT YET"], "report": "d2/delivery.md",
+     "pattern": "(?i)verdict\\W+deliver\\b", "pass": "DELIVER", "fail": "NOT YET"}
+  ]
+}

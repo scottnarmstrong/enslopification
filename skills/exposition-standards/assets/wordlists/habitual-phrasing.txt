@@ -1,0 +1,9 @@
+#!ignorecase
+# Habitual machine phrasing that is not on the banned-word list. Extend with the author.
+# "calibration" is also a term of differential geometry (calibrated geometry); allow it in allow.txt
+# for a paper that uses it in that sense.
+\bcrucial(?:ly)?\b
+\bcalibrat[a-z]*\b
+\bit(?: is|'s) worth noting\b
+\bin summary\b
+\bplays? a (?:key|central|vital) role\b

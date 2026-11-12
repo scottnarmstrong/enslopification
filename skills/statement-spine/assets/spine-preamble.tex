@@ -1,0 +1,57 @@
+% Default preamble for measuring a statement spine (typeset_spine.sh). Replace it with the
+% manuscript's own preamble (pass its main.tex with -p) as soon as one exists, so that the
+% measured pages are the manuscript's pages.
+\documentclass[11pt,letterpaper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsthm,amssymb,mathtools}
+\usepackage[margin=1.05in]{geometry}
+\usepackage{microtype}
+\usepackage{longtable,booktabs,array,calc}
+\usepackage{hyperref}
+\setlength{\emergencystretch}{3em}
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\theoremstyle{plain}
+\newtheorem{maintheorem}{Theorem}
+\renewcommand{\themaintheorem}{\Alph{maintheorem}}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+% Unicode symbols that working documents often contain in running text (pdfLaTeX only).
+\ifdefined\DeclareUnicodeCharacter
+  \DeclareUnicodeCharacter{2192}{\ensuremath{\to}}
+  \DeclareUnicodeCharacter{2190}{\ensuremath{\leftarrow}}
+  \DeclareUnicodeCharacter{2194}{\ensuremath{\leftrightarrow}}
+  \DeclareUnicodeCharacter{21D2}{\ensuremath{\Rightarrow}}
+  \DeclareUnicodeCharacter{21D4}{\ensuremath{\Leftrightarrow}}
+  \DeclareUnicodeCharacter{21A6}{\ensuremath{\mapsto}}
+  \DeclareUnicodeCharacter{2264}{\ensuremath{\le}}
+  \DeclareUnicodeCharacter{2265}{\ensuremath{\ge}}
+  \DeclareUnicodeCharacter{2260}{\ensuremath{\neq}}
+  \DeclareUnicodeCharacter{2248}{\ensuremath{\approx}}
+  \DeclareUnicodeCharacter{2261}{\ensuremath{\equiv}}
+  \DeclareUnicodeCharacter{2212}{\ensuremath{-}}
+  \DeclareUnicodeCharacter{2208}{\ensuremath{\in}}
+  \DeclareUnicodeCharacter{2209}{\ensuremath{\notin}}
+  \DeclareUnicodeCharacter{2282}{\ensuremath{\subset}}
+  \DeclareUnicodeCharacter{2286}{\ensuremath{\subseteq}}
+  \DeclareUnicodeCharacter{2229}{\ensuremath{\cap}}
+  \DeclareUnicodeCharacter{222A}{\ensuremath{\cup}}
+  \DeclareUnicodeCharacter{221E}{\ensuremath{\infty}}
+  \DeclareUnicodeCharacter{2200}{\ensuremath{\forall}}
+  \DeclareUnicodeCharacter{2203}{\ensuremath{\exists}}
+  \DeclareUnicodeCharacter{2218}{\ensuremath{\circ}}
+  \DeclareUnicodeCharacter{2016}{\ensuremath{\|}}
+  \DeclareUnicodeCharacter{27E8}{\ensuremath{\langle}}
+  \DeclareUnicodeCharacter{27E9}{\ensuremath{\rangle}}
+  \DeclareUnicodeCharacter{2211}{\ensuremath{\sum}}
+  \DeclareUnicodeCharacter{222B}{\ensuremath{\int}}
+  \DeclareUnicodeCharacter{2202}{\ensuremath{\partial}}
+  \DeclareUnicodeCharacter{2207}{\ensuremath{\nabla}}
+  \DeclareUnicodeCharacter{2713}{\ensuremath{\checkmark}}
+\fi

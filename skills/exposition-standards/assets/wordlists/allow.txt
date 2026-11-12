@@ -1,0 +1,15 @@
+#!ignorecase
+# Allowed phrases. A hit that lies inside a match of one of these regexes on the same line is
+# dropped. Each entry is a decision about a literal technical term; record who took it.
+# Project-specific terms of art go in the project's own allow file (check_vocabulary.py --allow
+# FILE), not here: one narrow regex per decision, with a comment line above it naming who
+# allowed it and when (in overnight mode: "provisional, on the morning list").
+# From the banned-word list itself: "the spectral gap" only as a fixed technical term.
+\bspectral gaps?\b
+# Literal terms, not the banned figurative uses of "clock" and "lens":
+\b(?:counter|anti)?clockwise\b
+\blens spaces?\b
+# Examples to enable per project, after the author agrees:
+# \bbridges? (?:edge|of the graph)\b
+# \bextinction (?:probability|time)\b
+# \bcalibrat(?:ed|ion)s? (?:form|geometry|submanifold)s?\b

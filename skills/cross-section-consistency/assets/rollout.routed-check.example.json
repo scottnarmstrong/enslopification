@@ -1,0 +1,41 @@
+{
+  "_doc": [
+    "The routed-inputs check of the cross-section-consistency skill: one read-only checker per group of routed",
+    "citations (a unit here is a group, not a section). Before running: cross_refs.py on the integrated manuscript,",
+    "with a unit map giving one unit per section and one for the opening part; then put each by-pair file of",
+    "xref/by-pair/ into exactly one group, and each candidate cycle of xref/cycles.tsv into one group.",
+    "Run with the writing-workflow driver: rollout.py routed-check.json --dry-run, then without --dry-run.",
+    "The editor merges the group reports into one mismatch table (assets/mismatch-table.template.md); after the",
+    "repairs (rollout.repair.example.json), run the targeted re-check: rollout.routed-recheck.example.json.",
+    "The groups below are examples: one per cited section (a heavily cited section split by its citing sections),",
+    "and the opening part's pointers into the proof part in a group of their own."
+  ],
+  "workdir": ".",
+  "agents": ["../agents.json", "../../writing-workflow/assets/agents.example.json"],
+  "limits": {"reviewer": 6},
+  "packet_repos": ["{{manuscript}}"],
+  "vars": {
+    "templates": "{{driver_dir}}/../../cross-section-consistency/assets/prompts",
+    "manuscript": "SET-ME: the canonical manuscript directory, compiled (main.tex, main.aux, main.pdf)",
+    "xref": "SET-ME: the output directory of cross_refs.py run on that manuscript",
+    "report": "SET-ME: the editor's merged mismatch table (used by the re-check only)",
+    "lean": "SET-ME: the Lean source at the pinned commit",
+    "graph_db": "SET-ME: the dependency database built by lean-dependency-graph",
+    "graph_hint": "query the dependency database with sqlite3 -readonly {{graph_db}} (table nodes: name, kind, module, path, line, used); only rows with used = 1 count",
+    "read_dirs": ["{{lean}}", "{{manuscript}}"]
+  },
+  "units": {
+    "G1": {"title": "statements of Section 15 cited by Sections 16 and 17",
+           "vars": {"rows": ["16--15.tsv", "17--15.tsv"], "cycles": ["Y1"]}},
+    "G2": {"title": "statements of Section 16 cited by Section 18",
+           "vars": {"rows": ["18--16.tsv"], "cycles": "none"}},
+    "G3": {"title": "the opening part's citations of the proof sections, and the crosswalk",
+           "vars": {"rows": ["I--12.tsv", "I--13.tsv", "I--14.tsv", "I--15.tsv"], "cycles": "none"}}
+  },
+  "stages": [
+    {"name": "check", "kind": "review", "profile": "reviewer",
+     "packet": ["manuscript={{manuscript}}", "xref={{xref}}"],
+     "require": "(?im)^[\\s#>*_|`-]*verdict\\W+(all match|mismatches)",
+     "reviews": {"routed": "{{templates}}/routed-check.md"}}
+  ]
+}

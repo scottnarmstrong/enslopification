@@ -1,0 +1,32 @@
+{
+  "_doc": [
+    "Referee round, step 1 (referee-adjudication skill): one referee per scope reads the whole frozen snapshot and",
+    "reports on its scope. The report is saved as <workdir>/<unit>/referee/report.md and must end with the line",
+    "'Suggestions: N', which adjudication_summary.py --expect uses. Then run rollout.adjudication.example.json.",
+    "Profile 'referee': add it to your agents file, e.g. {\"extends\": \"reviewer\", \"model\": \"<referee model>\"}, a",
+    "model family other than the writers'. The Yang-Mills campaign (2026) used three referees with these three",
+    "scopes. Copy this file to <working repository>/rollout/, replace every SET-ME value, run",
+    "rollout.py referee.json --dry-run, then without --dry-run."
+  ],
+  "workdir": ".",
+  "agents": ["../agents.json", "../../writing-workflow/assets/agents.example.json"],
+  "limits": {"writer": 4, "reviewer": 6},
+  "vars": {
+    "templates": "{{driver_dir}}/../../referee-adjudication/assets/prompts",
+    "snapshot": "SET-ME: the frozen snapshot of the whole draft (make_packet.py): main.pdf and every source file",
+    "paper": "a natural-language proof, written by AI agents, of the theorem of a completed Lean development",
+    "reader": "an expert in the field of the result, checking each step with pen and paper"
+  },
+  "units": {
+    "part1": {"title": "Part I", "vars": {"scope": "Part I: the abstract and Sections 1-9"}},
+    "uv":    {"title": "Sections 10-14", "vars": {"scope": "the ultraviolet construction, Sections 10-14"}},
+    "rest":  {"title": "Sections 15-19", "vars": {"scope": "the remaining proofs, Sections 15-19"}}
+  },
+  "stages": [
+    {"name": "referee", "kind": "review", "profile": "referee",
+     "packet": ["manuscript={{snapshot}}"],
+     "min_chars": 6000,
+     "require": "(?m)^Suggestions: \\d+\\s*$",
+     "reviews": {"report": "{{templates}}/referee.md"}}
+  ]
+}

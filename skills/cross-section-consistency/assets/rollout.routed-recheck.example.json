@@ -1,0 +1,17 @@
+{
+  "_doc": [
+    "The targeted re-check of the cross-section-consistency skill, after a repair round has been integrated: each",
+    "group's checker marks every item of the merged table RESOLVED or NOT RESOLVED and reads the repair sites for new",
+    "mismatches. Same workdir, groups and variables as the check (it extends that config); set 'report' and rerun",
+    "cross_refs.py first. A further round needs a new stage name (recheck2, with reports: recheck1)."
+  ],
+  "extends": "rollout.routed-check.example.json",
+  "stages": [
+    {"name": "recheck1", "kind": "review", "profile": "reviewer", "reports": "check",
+     "packet": ["manuscript={{manuscript}}", "xref={{xref}}", "report.md={{report}}"],
+     "require": "(?im)^[\\s#>*_|`-]*verdict\\W+(all resolved|open items)",
+     "reviews": {"routed": "{{templates}}/routed-recheck.md"}},
+    {"name": "converged1", "kind": "verdict", "report": "recheck1/routed.md",
+     "pattern": "(?i)verdict\\W+all resolved\\b", "pass": "RESOLVED", "fail": "OPEN"}
+  ]
+}

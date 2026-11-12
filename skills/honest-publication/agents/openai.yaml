@@ -1,0 +1,4 @@
+interface:
+  display_name: "Honest Publication"
+  short_description: "Publish a manuscript written from a Lean development with exact claims about what was checked"
+  default_prompt: "Use $honest-publication to prepare this manuscript and its repository for a public push: levels of detail, one disclosure wording, the three kinds of checking named separately, status tables, under-construction markers, a checked correspondence table, and the pre-publication checklist."

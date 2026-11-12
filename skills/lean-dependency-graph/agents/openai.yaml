@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lean Dependency Graph"
+  short_description: "Declaration graph and closure of a compiled Lean development"
+  default_prompt: "Use $lean-dependency-graph to extract the declaration graph of this compiled Lean development, mark the closure of its headline theorems, and compare it with any usage record the authors publish."

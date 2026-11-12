@@ -1,0 +1,67 @@
+#!ignorecase
+# Banned words for a mathematics manuscript: one regex per line, matched case-insensitively.
+# Copied from references/banned-words.md of the latex-math-writing skill (collection
+# math-paper-skills, licensed CC BY 4.0; this collection requires math-paper-skills), whose check
+# command this list transcribes entry by entry. Keep it in sync with that list; add or remove
+# words only on the author's instruction.
+# Qualified entries there ("bridge (figurative)", "gap": "spectral gap" only as a fixed term)
+# are matched in every sense here. Some words are terms of art in some fields (a gap in a
+# spectrum, a bridge of a graph, a certificate in complexity theory): the author allows such a
+# phrase in the project's allow file (--allow FILE), the editor records the decision there as a
+# comment, and in overnight mode the editor may allow it provisionally and put it on the morning
+# list for the author.
+\bledgers?\b
+\bcertif[a-z]*\b
+\bbridg[a-z]*\b
+\bbudget[a-z]*\b
+\bchampion[a-z]*\b
+\bclock[a-z]*\b
+\bcollar[a-z]*\b
+\bcomprehensive[a-z]*\b
+\bconsumers?\b
+\bcrank[a-z]*\b
+\bcutting-edge\b
+\bdeep[ -]dives?\b
+\bdelv[a-z]*\b
+\bdriv(?:er|ers|ing)\b
+\bextinction\b
+\bfoster[a-z]*\b
+\bgame-changers?\b
+\bgaps?\b
+\bgarner[a-z]*\b
+\bgat(?:e|es|ed|ing|ekeepers?)\b
+\bgroundbreaking\b
+\bharness[a-z]*\b
+\bholistic[a-z]*\b
+\billuminat[a-z]*\b
+\bintricate[a-z]*\b
+\blandscapes?\b
+\blens(?:es)?\b
+\bleverag[a-z]*\b
+\bmarching\b
+\bmultifaceted\b
+\bnavigat[a-z]*\b
+\bno[ -]go\b
+\bnuanced?\b
+\bpanorama[a-z]*\b
+\bparadigm[a-z]*\b
+\bpivotal\b
+\bproducers?\b
+\bridges?\b
+\brobustly\b
+\bschedul[a-z]*\b
+\bseamless[a-z]*\b
+\bshed(?:s|ding)? light\b
+\bshowcas[a-z]*\b
+\bspearhead[a-z]*\b
+\bstate-of-the-art\b
+\bsynerg[a-z]*\b
+\btapestr[a-z]*\b
+\btoolkits?\b
+\btransformative\b
+\bunder the hood\b
+\bunderpin[a-z]*\b
+\bunderscor[a-z]*\b
+\bunlock[a-z]*\b
+\bunprecedented\b
+\bworkhorses?\b
