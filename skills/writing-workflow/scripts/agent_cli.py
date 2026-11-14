@@ -45,7 +45,7 @@ DEFAULT_FAIL_PATTERNS = ["usage limit", "rate limit", "rate_limit", "quota excee
                          "you've hit your"]
 DEFAULT_PROTECT_EXCLUDE = [".git", ".lake", "__pycache__"]
 PROFILE_FIELDS = {"argv", "model", "effort", "family", "stdin", "stdout", "timeout_s", "retries", "fail_patterns",
-                  "fail_scan_chars", "min_chars", "env", "vars", "strip_lines", "extends", "description"}
+                  "fail_scan_chars", "fail_max_chars", "min_chars", "env", "vars", "strip_lines", "extends", "description"}
 HASH_LIMIT = 64 * 1024 * 1024        # larger protected files are fingerprinted by size and mtime only
 WRAPPER = '"$@"; rc=$?; echo "$rc" > "$ENSLOP_EXIT_FILE"; exit "$rc"'
 POLL_S = 5
@@ -177,7 +177,7 @@ def _validate_profile(name: str, p: dict) -> None:
         raise TemplateError(f"profile {name!r}: stdin must be 'prompt' or 'none'")
     if p.get("stdout", "log") not in ("report", "log"):
         raise TemplateError(f"profile {name!r}: stdout must be 'report' or 'log'")
-    for key in ("timeout_s", "retries", "min_chars", "fail_scan_chars"):
+    for key in ("timeout_s", "retries", "min_chars", "fail_scan_chars", "fail_max_chars"):
         if key in p and (not isinstance(p[key], int) or p[key] < 0):
             raise TemplateError(f"profile {name!r}: {key} must be a non-negative integer")
     for key in ("fail_patterns", "strip_lines"):
@@ -327,6 +327,21 @@ def _diff(before: dict[str, str], after: dict[str, str]) -> list[str]:
     return lines
 
 
+ATTEMPT_HEADER = re.compile(r"\n=== \d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ attempt \d+: [^\n]*\n")
+
+
+def _attempt_tail(path: Path, n: int) -> str:
+    """The last n characters written to the log by the current attempt, after its header line (earlier attempts,
+    for example one that stopped at a quota limit, must not count against this one)."""
+    text = _tail(path, max(n, 2 * 1024 * 1024))
+    last = None
+    for last in ATTEMPT_HEADER.finditer(text):
+        pass
+    if last is not None:
+        text = text[last.end():]
+    return text[-n:]
+
+
 def _tail(path: Path, n: int) -> str:
     try:
         with open(path, "rb") as f:
@@ -437,7 +452,12 @@ def _evaluate(job: Job, rc: int | None, timed_out: bool, before: dict[str, str] 
             return Result("protect", returncode=rc,
                           message=f"{len(changes)} protected file(s) changed; see {report}")
     scan = p.get("fail_scan_chars", 4000)
-    texts = [_tail(job.log, scan)] + ([_tail(job.partial, scan)] if job.report_mode else [])
+    texts = [_attempt_tail(job.log, scan)] + ([_tail(job.partial, scan)] if job.report_mode else [])
+    if rc == 0:
+        # A run that exited cleanly is a quota stop only if its output is the short limit message itself, not a
+        # report or summary that merely mentions a limit.
+        out = texts[-1]
+        texts = [out] if len(out.strip()) <= p.get("fail_max_chars", 1000) else []
     hit = match_fail_pattern(texts, p.get("fail_patterns", DEFAULT_FAIL_PATTERNS))
     if hit:
         return Result("quota", returncode=rc, message=f"output matches {hit!r}; not retried")

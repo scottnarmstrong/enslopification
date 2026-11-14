@@ -21,7 +21,7 @@ permissions: [agent profiles](agent-profiles.md).
 | `stdout` | `report`: stdout is the deliverable and is saved as the report; `log`: the agent writes files, stdout is a log | `log` |
 | `timeout_s` | the process group is killed after this many seconds | 14400 |
 | `retries` | further attempts after a failure (never after a quota stop or a protect violation) | 1 |
-| `fail_patterns` | quota or rate-limit texts (case-insensitive substrings; `re:` prefixes a regex) searched in the last `fail_scan_chars` characters of stdout and stderr | usage limit, rate limit, quota exceeded, ... |
+| `fail_patterns` | quota or rate-limit texts (case-insensitive substrings; `re:` prefixes a regex) searched in the last `fail_scan_chars` characters that the current attempt wrote to stdout and stderr; after exit status 0 only an output of at most `fail_max_chars` characters (default 1000) is searched, so a finished report or summary that mentions a limit is not a quota stop | usage limit, rate limit, quota exceeded, ... |
 | `min_chars` | minimum report length (report mode) | 0 (an empty report always fails) |
 | `strip_lines` | regexes; matching lines are removed from a report (a CLI banner, a sign-in warning) | none |
 | `env` | extra environment variables (placeholders allowed) | none |
