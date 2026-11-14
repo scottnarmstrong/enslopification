@@ -131,12 +131,15 @@ unsafe def main (args : List String) : IO UInt32 := do
           match parts.back? with
           | some (md, _) => processModule h m md
           | none => pure ()
-          for (_, region) in parts.reverse do region.free
+          -- Do not free the regions: on Lean v4.35.0, `CompactedRegion.free` after `readModuleDataParts`
+          -- crashes the process (exit -11). They are released when the process exits; the chunk size bounds them.
+          let _ := parts.size
         else
           let (md, region) ← readModuleData p
           processModule h m md
-          region.free
+          let _ := region
         n := n + 1
+        h.flush
       | _ =>
         IO.eprintln s!"Extract.lean: ignoring argument without a single '=': {a}"
     h.flush
